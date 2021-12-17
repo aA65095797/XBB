@@ -92,6 +92,8 @@ public class ShortLinkInsert {
             rest = rest / 62;
         }
         for (; !stack.isEmpty(); ) {
+
+            System.err.println("sdsd");
             result.append(stack.pop());
         }
         int result_length = result.length();

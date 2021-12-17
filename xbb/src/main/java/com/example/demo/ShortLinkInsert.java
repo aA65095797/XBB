@@ -18,7 +18,7 @@ public class ShortLinkInsert {
     public static void main(String[] args) {
 //        HashSet<String> a = new HashSet<>();
 //        Integer b  = 0;
-//        for(int i = 150sdsdds00000; i < 100000000; i++){
+//        for(int i = 1000; i < 100000000; i++){
 //
 //
 //

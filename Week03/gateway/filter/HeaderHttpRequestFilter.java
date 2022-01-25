@@ -46,7 +46,7 @@ public class HeaderHttpRequestFilter implements HttpRequestFilter {
                 response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
 
                 response.headers().set("Content-Type", "application/json");
-//                response.headers().setInt("Content-Length", Integer.parseInt(response.getgetValue()));
+                response.headers().setInt("Content-Length", response.content().readableBytes());
 
 
 //            for (Header e : endpointResponse.getAllHeaders()) {

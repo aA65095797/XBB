@@ -21,6 +21,12 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
     private final List<String> proxyServer;
     private HttpOutboundHandler handler;
 
+    private static final List<HttpRequestFilter> filters = new ArrayList<>();
+    static {
+        filters.add(new HeaderHttpRequestFilter());
+        filters.add(new HeaderHttpRequestTokenFilter());
+    }
+
     
     public HttpInboundHandler(List<String> proxyServer) {
         this.proxyServer = proxyServer;
@@ -42,9 +48,7 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 //            if (uri.contains("/test")) {
 //                handlerTest(fullRequest, ctx);
 //            }
-            List<HttpRequestFilter> filters = new ArrayList<>();
-            filters.add(new HeaderHttpRequestFilter());
-            filters.add(new HeaderHttpRequestTokenFilter());
+
             handler.handle(fullRequest, ctx, filters);
     
         } catch(Exception e) {

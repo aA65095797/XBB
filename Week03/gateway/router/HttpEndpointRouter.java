@@ -1,4 +1,4 @@
-package com.example.demo.gateway.router;
+package gateway.router;
 
 import java.util.List;
 

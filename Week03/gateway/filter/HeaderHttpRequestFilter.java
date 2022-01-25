@@ -1,4 +1,4 @@
-package com.example.demo.gateway.filter;
+package gateway.filter;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -9,8 +9,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpConstants;
 import io.netty.handler.codec.http.HttpUtil;
-import org.apache.http.util.EntityUtils;
-
 
 import java.util.ArrayList;
 import java.util.List;

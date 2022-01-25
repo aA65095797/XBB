@@ -1,12 +1,10 @@
-package com.example.demo.gateway.outbound.httpclient4;
+package gateway.outbound.httpclient4;
 
-
-
-import com.example.demo.gateway.filter.HeaderHttpResponseFilter;
-import com.example.demo.gateway.filter.HttpRequestFilter;
-import com.example.demo.gateway.filter.HttpResponseFilter;
-import com.example.demo.gateway.router.HttpEndpointRouter;
-import com.example.demo.gateway.router.RandomHttpEndpointRouter;
+import gateway.filter.HeaderHttpResponseFilter;
+import gateway.filter.HttpRequestFilter;
+import gateway.filter.HttpResponseFilter;
+import gateway.router.HttpEndpointRouter;
+import gateway.router.RandomHttpEndpointRouter;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,7 +15,6 @@ import io.netty.handler.codec.http.HttpUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.concurrent.FutureCallback;
-
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
@@ -25,9 +22,10 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.*;
-import java.util.logging.Filter;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
@@ -72,12 +70,14 @@ public class HttpOutboundHandler {
         return backend.endsWith("/")?backend.substring(0,backend.length()-1):backend;
     }
     
-    public void handle(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx, HttpRequestFilter filter) {
+    public void handle(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx, List<HttpRequestFilter>  filters) {
         String backendUrl = router.route(this.backendUrls);
         final String url = backendUrl + fullRequest.uri();
 
-        if(!filter.filter(fullRequest, ctx)){
-            return;
+        for(HttpRequestFilter filter : filters) {
+            if (!filter.filter(fullRequest, ctx)) {
+                return;
+            }
         }
 
         proxyService.submit(()->fetchGet(fullRequest, ctx, url));

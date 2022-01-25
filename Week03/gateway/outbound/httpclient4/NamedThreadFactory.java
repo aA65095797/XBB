@@ -1,4 +1,4 @@
-package com.example.demo.gateway.outbound.httpclient4;
+package gateway.outbound.httpclient4;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

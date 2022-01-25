@@ -1,4 +1,4 @@
-package com.example.demo.gateway.filter;
+package gateway.filter;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 

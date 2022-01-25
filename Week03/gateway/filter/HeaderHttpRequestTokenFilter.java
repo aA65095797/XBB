@@ -1,4 +1,4 @@
-package com.example.demo.gateway.filter;
+package gateway.filter;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -9,9 +9,10 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpConstants;
 import io.netty.handler.codec.http.HttpUtil;
+import org.junit.platform.commons.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -19,23 +20,21 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * @author xubenben
- * @date 2022/01/25 10:24 下午
+ * @date 2022/01/25 11:39 下午
  */
-public class HeaderHttpRequestMemberFilter implements HttpRequestFilter {
+public class HeaderHttpRequestTokenFilter implements HttpRequestFilter {
 
-    static final List<String> passUrl = new ArrayList<>();
-
+    //key: token， value：memberID
+    static final Map<String, String> tokens = new HashMap<>();
     static {
-        passUrl.add("/xbb");
-        passUrl.add("/test");
-        passUrl.add("/hhh");
+        tokens.put("111","11223344");
+        tokens.put("222","2323232");
     }
-
     @Override
     public Boolean filter(FullHttpRequest fullRequest, ChannelHandlerContext ctx) {
-        fullRequest.headers().set("mao", "soul");
-        String uri = fullRequest.uri();
-        if (!passUrl.contains(uri)) {
+        String token = fullRequest.headers().get("token");
+
+        if(StringUtils.isBlank(token) || StringUtils.isBlank(tokens.get(token))){
             FullHttpResponse response = null;
             try {
 //            String value = "hello,kimmking";
@@ -46,11 +45,11 @@ public class HeaderHttpRequestMemberFilter implements HttpRequestFilter {
 
 //            System.out.println(new String(body));
 //            System.out.println(body.length);
-                ByteBuf content = Unpooled.copiedBuffer("不让你请求，请回家种红薯", HttpConstants.DEFAULT_CHARSET);
+                ByteBuf content = Unpooled.copiedBuffer("你不是我们公司的，请回家养猪去吧", HttpConstants.DEFAULT_CHARSET);
                 response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
 
                 response.headers().set("Content-Type", "application/json");
-//                response.headers().setInt("Content-Length", Integer.parseInt(response.getgetValue()));
+                response.headers().setInt("Content-Length", response.content().readableBytes());
 
 
 //            for (Header e : endpointResponse.getAllHeaders()) {
@@ -64,7 +63,7 @@ public class HeaderHttpRequestMemberFilter implements HttpRequestFilter {
 
                 ctx.close();
             } finally {
-                System.err.println("fullRequest：【" + fullRequest + "】");
+                System.err.println("fullRequest：【" + fullRequest+"】");
                 System.err.println(fullRequest.uri());
                 if (fullRequest != null) {
                     if (!HttpUtil.isKeepAlive(fullRequest)) {
